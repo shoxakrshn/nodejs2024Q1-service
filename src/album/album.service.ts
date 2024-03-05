@@ -43,7 +43,7 @@ export class AlbumService {
     }
 
     trackDb.forEach((value, key) => {
-      if (value.artistId === id) {
+      if (value.albumId === id) {
         const track = trackDb.get(key);
         track.albumId = null;
       }

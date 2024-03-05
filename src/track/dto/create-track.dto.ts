@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateTrackDto {
   @IsString()
@@ -6,11 +6,11 @@ export class CreateTrackDto {
   name: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   artistId: string | null;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   albumId: string | null;
 
   @IsNumber()
