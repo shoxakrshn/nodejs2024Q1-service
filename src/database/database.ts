@@ -23,12 +23,20 @@ export const trackDb = new Map<string, Track>(
 
 export const favoriteDb: Favs = new Favs();
 
+// export const dbService = {
+//   users: userDb,
+//   artists: artistDb,
+//   albums: albumDb,
+//   tracks: trackDb,
+//   favs: favoriteDb,
+// };
+
 export const dbService = {
-  users: userDb,
-  artists: artistDb,
-  albums: albumDb,
-  tracks: trackDb,
-  favs: favoriteDb,
+  users: new Map<string, User>(),
+  artists: new Map<string, Artist>(),
+  albums: new Map<string, Album>(),
+  tracks: new Map<string, Track>(),
+  favs: new Favs(),
 };
 
 // class Db {

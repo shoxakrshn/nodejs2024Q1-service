@@ -3,15 +3,17 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { dbService } from 'src/database/database';
 import { User } from './user.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user.dto';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class UserService {
+  constructor(private readonly dbService: DatabaseService) {}
+
   getAll() {
-    const users = [...dbService.users.values()].map((user) =>
+    const users = [...this.dbService.users.values()].map((user) =>
       this.removeUserPasswordField(user),
     );
 
@@ -19,27 +21,27 @@ export class UserService {
   }
 
   getById(id: string) {
-    if (!dbService.users.has(id)) {
+    if (!this.dbService.users.has(id)) {
       throw new NotFoundException('User not found');
     }
 
-    const user = dbService.users.get(id);
+    const user = this.dbService.users.get(id);
     return this.removeUserPasswordField(user);
   }
 
   create({ login, password }: CreateUserDto) {
     const newUser: User = new User(login, password);
-    dbService.users.set(newUser.id, newUser);
+    this.dbService.users.set(newUser.id, newUser);
 
     return this.removeUserPasswordField(newUser);
   }
 
   update(id: string, { oldPassword, newPassword }: UpdatePasswordDto) {
-    if (!dbService.users.has(id)) {
+    if (!this.dbService.users.has(id)) {
       throw new NotFoundException('User not found');
     }
 
-    const user = dbService.users.get(id);
+    const user = this.dbService.users.get(id);
 
     if (user.password !== oldPassword) {
       throw new ForbiddenException('Old password is wrong');
@@ -53,11 +55,11 @@ export class UserService {
   }
 
   delete(id: string) {
-    if (!dbService.users.has(id)) {
+    if (!this.dbService.users.has(id)) {
       throw new NotFoundException('User not found');
     }
 
-    dbService.users.delete(id);
+    this.dbService.users.delete(id);
   }
 
   removeUserPasswordField(user: User) {
