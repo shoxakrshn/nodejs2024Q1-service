@@ -23,7 +23,7 @@ export const trackDb = new Map<string, Track>(
 
 export const favoriteDb: Favs = new Favs();
 
-export const DbService = {
+export const dbService = {
   users: userDb,
   artists: artistDb,
   albums: albumDb,
