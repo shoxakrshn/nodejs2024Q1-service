@@ -47,6 +47,7 @@ export class UserService {
 
     user.password = newPassword;
     user.version += 1;
+    user.updatedAt = Date.now();
 
     return this.removeUserPasswordField(user);
   }
