@@ -3,7 +3,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { eFavs } from './favs.model';
+import { eFavs } from './entities/favs.entity';
 import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Album } from 'src/album/album.model';
-import { Artist } from 'src/artist/artist.model';
-import { Favs } from 'src/favs/favs.model';
-import { Track } from 'src/track/track.model';
-import { User } from 'src/user/user.model';
+import { Album } from 'src/album/entities/album.entity';
+import { Artist } from 'src/artist/entities/artist.entity';
+import { Favs } from 'src/favs/entities/favs.entity';
+import { Track } from 'src/track/entities/track.entity';
+import { User } from 'src/user/entities/user.entity';
 // import { userDb, artistDb, albumDb, trackDb, favoriteDb } from './data';
 
 @Injectable()

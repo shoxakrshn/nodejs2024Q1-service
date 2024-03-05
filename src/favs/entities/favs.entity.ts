@@ -1,6 +1,6 @@
-import { Album } from 'src/album/album.model';
-import { Artist } from 'src/artist/artist.model';
-import { Track } from 'src/track/track.model';
+import { Album } from 'src/album/entities/album.entity';
+import { Artist } from 'src/artist/entities/artist.entity';
+import { Track } from 'src/track/entities/track.entity';
 
 export class Favs {
   constructor(
