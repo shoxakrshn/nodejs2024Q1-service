@@ -3,69 +3,69 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { albumDb, artistDb, favoriteDb, trackDb } from 'src/database/database';
+import { DbService } from 'src/database/database';
 import { eFavs } from './favs.model';
 
 @Injectable()
 export class FavsService {
   getAll() {
-    return favoriteDb;
+    return DbService.favs;
   }
 
   addArtist(id: string) {
-    if (!artistDb.has(id)) {
+    if (!DbService.artists.has(id)) {
       throw new UnprocessableEntityException("Artist doesn't exist");
     }
 
-    const artist = artistDb.get(id);
-    favoriteDb.addArtist(artist);
+    const artist = DbService.artists.get(id);
+    DbService.favs.addArtist(artist);
 
     return artist;
   }
 
   deleteArtist(id: string) {
-    if (!favoriteDb.has(id, eFavs.artists)) {
+    if (!DbService.favs.has(id, eFavs.artists)) {
       throw new NotFoundException('This track is not favorite');
     }
 
-    favoriteDb.deleteArtist(id);
+    DbService.favs.deleteArtist(id);
   }
 
   addAlbum(id: string) {
-    if (!albumDb.has(id)) {
+    if (!DbService.albums.has(id)) {
       throw new UnprocessableEntityException("Album doesn't exist");
     }
 
-    const album = albumDb.get(id);
-    favoriteDb.addAlbum(album);
+    const album = DbService.albums.get(id);
+    DbService.favs.addAlbum(album);
 
     return album;
   }
 
   deleteAlbum(id: string) {
-    if (!favoriteDb.has(id, eFavs.albums)) {
+    if (!DbService.favs.has(id, eFavs.albums)) {
       throw new NotFoundException('This Album is not favorite');
     }
 
-    favoriteDb.deleteAlbum(id);
+    DbService.favs.deleteAlbum(id);
   }
 
   addTrack(id: string) {
-    if (!trackDb.has(id)) {
+    if (!DbService.tracks.has(id)) {
       throw new UnprocessableEntityException("Track doesn't exist");
     }
 
-    const track = trackDb.get(id);
-    favoriteDb.addTrack(track);
+    const track = DbService.tracks.get(id);
+    DbService.favs.addTrack(track);
 
     return track;
   }
 
   deleteTrack(id: string) {
-    if (!favoriteDb.has(id, eFavs.tracks)) {
+    if (!DbService.favs.has(id, eFavs.tracks)) {
       throw new NotFoundException('This track is not favorite');
     }
 
-    favoriteDb.deleteTrack(id);
+    DbService.favs.deleteTrack(id);
   }
 }

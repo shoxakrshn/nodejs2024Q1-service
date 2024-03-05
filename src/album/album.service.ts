@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { albumDb, favoriteDb, trackDb } from 'src/database/database';
+import { DbService } from 'src/database/database';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { Album } from './album.model';
 import { UpdateAlbumDto } from './dto/update-album.dto';
@@ -7,50 +7,50 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 @Injectable()
 export class AlbumService {
   getAll() {
-    return [...albumDb.values()];
+    return [...DbService.albums.values()];
   }
 
   getById(id: string) {
-    if (!albumDb.has(id)) {
+    if (!DbService.albums.has(id)) {
       throw new NotFoundException('Album not found');
     }
 
-    return albumDb.get(id);
+    return DbService.albums.get(id);
   }
 
   create({ name, year, artistId }: CreateAlbumDto) {
     const newAlbum = new Album(name, year, artistId);
-    albumDb.set(newAlbum.id, newAlbum);
+    DbService.albums.set(newAlbum.id, newAlbum);
 
     return newAlbum;
   }
 
   update(id: string, updateArtistDto: UpdateAlbumDto) {
-    if (!albumDb.has(id)) {
+    if (!DbService.albums.has(id)) {
       throw new NotFoundException('Album not found');
     }
 
-    const album = albumDb.get(id);
+    const album = DbService.albums.get(id);
     const updatedAlbum = { ...album, ...updateArtistDto };
-    albumDb.set(id, updatedAlbum);
+    DbService.albums.set(id, updatedAlbum);
 
     return updatedAlbum;
   }
 
   delete(id: string) {
-    if (!albumDb.has(id)) {
+    if (!DbService.albums.has(id)) {
       throw new NotFoundException('Album not found');
     }
 
-    trackDb.forEach((value, key) => {
+    DbService.tracks.forEach((value, key) => {
       if (value.albumId === id) {
-        const track = trackDb.get(key);
+        const track = DbService.tracks.get(key);
         track.albumId = null;
       }
     });
 
-    favoriteDb.deleteAlbum(id);
+    DbService.favs.deleteAlbum(id);
 
-    albumDb.delete(id);
+    DbService.albums.delete(id);
   }
 }

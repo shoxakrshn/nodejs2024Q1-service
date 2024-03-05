@@ -132,3 +132,11 @@ class Db {
   tracks = new Map<string, Track>();
   favs = new Favs();
 }
+
+export const DbService = {
+  users: userDb,
+  artists: artistDb,
+  albums: albumDb,
+  tracks: trackDb,
+  favs: favoriteDb,
+};
