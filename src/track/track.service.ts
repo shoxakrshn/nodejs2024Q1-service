@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { trackDb } from 'src/database/database';
+import { favoriteDb, trackDb } from 'src/database/database';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { Track } from './track.model';
 import { UpdateTrackDto } from './dto/update-track.dto';
@@ -41,6 +41,7 @@ export class TrackService {
       throw new NotFoundException('Track not found');
     }
 
+    favoriteDb.deleteTrack(id);
     trackDb.delete(id);
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { albumDb } from 'src/database/database';
+import { albumDb, favoriteDb, trackDb } from 'src/database/database';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { Album } from './album.model';
 import { UpdateAlbumDto } from './dto/update-album.dto';
@@ -41,6 +41,15 @@ export class AlbumService {
     if (!albumDb.has(id)) {
       throw new NotFoundException('Album not found');
     }
+
+    trackDb.forEach((value, key) => {
+      if (value.artistId === id) {
+        const track = trackDb.get(key);
+        track.albumId = null;
+      }
+    });
+
+    favoriteDb.deleteAlbum(id);
 
     albumDb.delete(id);
   }
