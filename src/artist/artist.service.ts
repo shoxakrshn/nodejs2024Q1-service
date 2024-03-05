@@ -27,19 +27,19 @@ export class ArtistService {
 
   update(id: string, updateArtistDto: UpdateArtistDto) {
     if (!artistDb.has(id)) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Artist not found');
     }
 
     const artist = artistDb.get(id);
-    const updateArtist = { ...artist, ...updateArtistDto };
-    artistDb.set(id, updateArtist);
+    const updatedArtist = { ...artist, ...updateArtistDto };
+    artistDb.set(id, updatedArtist);
 
-    return updateArtist;
+    return updatedArtist;
   }
 
   delete(id: string) {
     if (!artistDb.has(id)) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Artist not found');
     }
 
     artistDb.delete(id);
