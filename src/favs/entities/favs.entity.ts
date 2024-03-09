@@ -4,9 +4,9 @@ import { Track } from 'src/track/entities/track.entity';
 
 export class Favs {
   constructor(
-    protected artists: Artist[] = [],
-    protected albums: Album[] = [],
-    protected tracks: Track[] = [],
+    private artists: Artist[] = [],
+    private albums: Album[] = [],
+    private tracks: Track[] = [],
   ) {}
 
   addArtist(artist: Artist) {
