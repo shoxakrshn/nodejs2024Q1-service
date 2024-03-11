@@ -11,6 +11,12 @@
 git clone {repository URL}
 ```
 
+## Switch branch
+
+```
+git checkout develop
+```
+
 ## Installing NPM modules
 
 ```
@@ -21,6 +27,12 @@ npm install
 
 ```
 npm start
+```
+
+## Running application in dev mode
+
+```
+npm start:dev
 ```
 
 After starting the app on port (4000 as default) you can open
