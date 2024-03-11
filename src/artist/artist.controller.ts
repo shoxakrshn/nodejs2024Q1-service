@@ -30,14 +30,18 @@ export class ArtistController {
   }
 
   @Post()
-  create(@Body(ValidationPipe) createArtirstDto: CreateArtistDto) {
+  create(
+    @Body(new ValidationPipe({ whitelist: true }))
+    createArtirstDto: CreateArtistDto,
+  ) {
     return this.artistService.create(createArtirstDto);
   }
 
   @Put(':id')
   update(
     @Param('id', ParseUUIDPipe) id,
-    @Body(ValidationPipe) updateArtistDto: UpdateArtistDto,
+    @Body(new ValidationPipe({ whitelist: true }))
+    updateArtistDto: UpdateArtistDto,
   ) {
     return this.artistService.update(id, updateArtistDto);
   }

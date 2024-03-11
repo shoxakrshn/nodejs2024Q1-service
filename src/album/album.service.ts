@@ -1,57 +1,47 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateAlbumDto } from './dto/create-album.dto';
-import { Album } from './entities/album.entity';
-import { UpdateAlbumDto } from './dto/update-album.dto';
 import { DatabaseService } from 'src/database/database.service';
+import { CreateAlbumDto } from './dto/create-album.dto';
+import { UpdateAlbumDto } from './dto/update-album.dto';
 
 @Injectable()
 export class AlbumService {
-  constructor(private readonly dbService: DatabaseService) {}
-  getAll() {
-    return [...this.dbService.albums.values()];
+  constructor(private readonly databaseService: DatabaseService) {}
+  async getAll() {
+    return await this.databaseService.album.findMany();
   }
 
-  getById(id: string) {
-    if (!this.dbService.albums.has(id)) {
-      throw new NotFoundException('Album not found');
-    }
-
-    return this.dbService.albums.get(id);
-  }
-
-  create({ name, year, artistId }: CreateAlbumDto) {
-    const newAlbum = new Album(name, year, artistId);
-    this.dbService.albums.set(newAlbum.id, newAlbum);
-
-    return newAlbum;
-  }
-
-  update(id: string, updateArtistDto: UpdateAlbumDto) {
-    if (!this.dbService.albums.has(id)) {
-      throw new NotFoundException('Album not found');
-    }
-
-    const album = this.dbService.albums.get(id);
-    const updatedAlbum = { ...album, ...updateArtistDto };
-    this.dbService.albums.set(id, updatedAlbum);
-
-    return updatedAlbum;
-  }
-
-  delete(id: string) {
-    if (!this.dbService.albums.has(id)) {
-      throw new NotFoundException('Album not found');
-    }
-
-    this.dbService.tracks.forEach((value, key) => {
-      if (value.albumId === id) {
-        const track = this.dbService.tracks.get(key);
-        track.albumId = null;
-      }
+  async getById(id: string) {
+    const album = await this.databaseService.album.findUnique({
+      where: { id },
     });
 
-    this.dbService.favs.deleteAlbum(id);
+    if (!album) {
+      throw new NotFoundException('Album not found');
+    }
 
-    this.dbService.albums.delete(id);
+    return album;
+  }
+
+  async create(CreateAlbumDto: CreateAlbumDto) {
+    return this.databaseService.album.create({ data: CreateAlbumDto });
+  }
+
+  async update(id: string, updateArtistDto: UpdateAlbumDto) {
+    try {
+      return await this.databaseService.album.update({
+        where: { id },
+        data: updateArtistDto,
+      });
+    } catch {
+      throw new NotFoundException('Album not found');
+    }
+  }
+
+  async delete(id: string) {
+    try {
+      await this.databaseService.album.delete({ where: { id } });
+    } catch {
+      throw new NotFoundException('Album not found');
+    }
   }
 }

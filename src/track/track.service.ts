@@ -1,48 +1,53 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateTrackDto } from './dto/create-track.dto';
-import { Track } from './entities/track.entity';
-import { UpdateTrackDto } from './dto/update-track.dto';
 import { DatabaseService } from 'src/database/database.service';
+import { CreateTrackDto } from './dto/create-track.dto';
+import { UpdateTrackDto } from './dto/update-track.dto';
 
 @Injectable()
 export class TrackService {
-  constructor(private readonly dbService: DatabaseService) {}
-  getAll() {
-    return [...this.dbService.tracks.values()];
+  constructor(private readonly databaseService: DatabaseService) {}
+  async getAll() {
+    return await this.databaseService.track.findMany();
   }
 
-  getById(id: string) {
-    if (!this.dbService.tracks.has(id)) {
-      throw new NotFoundException('Track not found');
-    }
-    return this.dbService.tracks.get(id);
-  }
+  async getById(id: string) {
+    const track = await this.databaseService.track.findUnique({
+      where: { id },
+    });
 
-  create({ name, artistId, albumId, duration }: CreateTrackDto) {
-    const newTrack = new Track(name, artistId, albumId, duration);
-    this.dbService.tracks.set(newTrack.id, newTrack);
-
-    return newTrack;
-  }
-
-  update(id: string, updateTrackDto: UpdateTrackDto) {
-    if (!this.dbService.tracks.has(id)) {
+    if (!track) {
       throw new NotFoundException('Track not found');
     }
 
-    const track = this.dbService.tracks.get(id);
-    const updatedTrack = { ...track, ...updateTrackDto };
-    this.dbService.tracks.set(id, updatedTrack);
-
-    return updatedTrack;
+    return track;
   }
 
-  delete(id: string) {
-    if (!this.dbService.tracks.has(id)) {
+  async create(createTrackDto: CreateTrackDto) {
+    try {
+      return await this.databaseService.track.create({
+        data: createTrackDto,
+      });
+    } catch {
       throw new NotFoundException('Track not found');
     }
+  }
 
-    this.dbService.favs.deleteTrack(id);
-    this.dbService.tracks.delete(id);
+  async update(id: string, updateTrackDto: UpdateTrackDto) {
+    try {
+      return await this.databaseService.track.update({
+        where: { id },
+        data: updateTrackDto,
+      });
+    } catch {
+      throw new NotFoundException('Track not found');
+    }
+  }
+
+  async delete(id: string) {
+    try {
+      return await this.databaseService.track.delete({ where: { id } });
+    } catch {
+      throw new NotFoundException('Track not found');
+    }
   }
 }

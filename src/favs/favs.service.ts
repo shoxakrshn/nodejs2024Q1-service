@@ -1,73 +1,114 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
-import { eFavs } from './entities/favs.entity';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
+
+const artistFileds = {
+  id: true,
+  name: true,
+  grammy: true,
+};
+
+const albumFields = {
+  id: true,
+  name: true,
+  year: true,
+  artistId: true,
+};
+
+const trackFields = {
+  id: true,
+  name: true,
+  artistId: true,
+  albumId: true,
+  duration: true,
+};
 
 @Injectable()
 export class FavsService {
-  constructor(private readonly dbService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseService) {}
+  async getAll() {
+    const artists = await this.databaseService.artist.findMany({
+      where: { favorite: true },
+      select: artistFileds,
+    });
 
-  getAll() {
-    return this.dbService.favs;
+    const albums = await this.databaseService.album.findMany({
+      where: { favorite: true },
+      select: albumFields,
+    });
+
+    const tracks = await this.databaseService.track.findMany({
+      where: { favorite: true },
+      select: trackFields,
+    });
+
+    return { artists, albums, tracks };
   }
-
-  addArtist(id: string) {
-    if (!this.dbService.artists.has(id)) {
+  async addArtist(id: string) {
+    try {
+      return await this.databaseService.artist.update({
+        where: { id },
+        data: { favorite: true },
+        select: artistFileds,
+      });
+    } catch {
       throw new UnprocessableEntityException("Artist doesn't exist");
     }
-
-    const artist = this.dbService.artists.get(id);
-    this.dbService.favs.addArtist(artist);
-
-    return artist;
   }
 
-  deleteArtist(id: string) {
-    if (!this.dbService.favs.has(id, eFavs.artists)) {
-      throw new NotFoundException('This track is not favorite');
+  async deleteArtist(id: string) {
+    try {
+      await this.databaseService.artist.update({
+        where: { id },
+        data: { favorite: false },
+      });
+    } catch {
+      throw new UnprocessableEntityException("Artist doesn't exist");
     }
-
-    this.dbService.favs.deleteArtist(id);
   }
 
-  addAlbum(id: string) {
-    if (!this.dbService.albums.has(id)) {
+  async addAlbum(id: string) {
+    try {
+      return await this.databaseService.album.update({
+        where: { id },
+        data: { favorite: true },
+        select: albumFields,
+      });
+    } catch {
       throw new UnprocessableEntityException("Album doesn't exist");
     }
-
-    const album = this.dbService.albums.get(id);
-    this.dbService.favs.addAlbum(album);
-
-    return album;
   }
 
-  deleteAlbum(id: string) {
-    if (!this.dbService.favs.has(id, eFavs.albums)) {
-      throw new NotFoundException('This Album is not favorite');
+  async deleteAlbum(id: string) {
+    try {
+      await this.databaseService.album.update({
+        where: { id },
+        data: { favorite: false },
+      });
+    } catch {
+      throw new UnprocessableEntityException("Album doesn't exist");
     }
-
-    this.dbService.favs.deleteAlbum(id);
   }
 
-  addTrack(id: string) {
-    if (!this.dbService.tracks.has(id)) {
+  async addTrack(id: string) {
+    try {
+      return await this.databaseService.track.update({
+        where: { id },
+        data: { favorite: true },
+        select: trackFields,
+      });
+    } catch {
       throw new UnprocessableEntityException("Track doesn't exist");
     }
-
-    const track = this.dbService.tracks.get(id);
-    this.dbService.favs.addTrack(track);
-
-    return track;
   }
 
-  deleteTrack(id: string) {
-    if (!this.dbService.favs.has(id, eFavs.tracks)) {
-      throw new NotFoundException('This track is not favorite');
+  async deleteTrack(id: string) {
+    try {
+      await this.databaseService.track.update({
+        where: { id },
+        data: { favorite: false },
+      });
+    } catch {
+      throw new UnprocessableEntityException("Track doesn't exist");
     }
-
-    this.dbService.favs.deleteTrack(id);
   }
 }
