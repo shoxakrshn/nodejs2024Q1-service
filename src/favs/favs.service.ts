@@ -11,7 +11,19 @@ export class FavsService {
   constructor(private readonly dbService: DatabaseService) {}
 
   getAll() {
-    return this.dbService.favs;
+    const artists = this.dbService.favs.getArtists.map((artistId) => {
+      return this.dbService.artists.get(artistId);
+    });
+
+    const albums = this.dbService.favs.getAlbums.map((albumId) => {
+      return this.dbService.albums.get(albumId);
+    });
+
+    const tracks = this.dbService.favs.getTracks.map((trackId) => {
+      return this.dbService.tracks.get(trackId);
+    });
+
+    return { artists, albums, tracks };
   }
 
   addArtist(id: string) {
@@ -20,7 +32,7 @@ export class FavsService {
     }
 
     const artist = this.dbService.artists.get(id);
-    this.dbService.favs.addArtist(artist);
+    this.dbService.favs.addArtist(id);
 
     return artist;
   }
@@ -39,7 +51,7 @@ export class FavsService {
     }
 
     const album = this.dbService.albums.get(id);
-    this.dbService.favs.addAlbum(album);
+    this.dbService.favs.addAlbum(id);
 
     return album;
   }
@@ -58,7 +70,7 @@ export class FavsService {
     }
 
     const track = this.dbService.tracks.get(id);
-    this.dbService.favs.addTrack(track);
+    this.dbService.favs.addTrack(id);
 
     return track;
   }
