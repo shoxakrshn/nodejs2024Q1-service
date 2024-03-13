@@ -41,9 +41,9 @@ export class TrackController {
   update(
     @Param('id', ParseUUIDPipe) id,
     @Body(new ValidationPipe({ whitelist: true }))
-    updateTracktDto: UpdateTrackDto,
+    updateTrackDto: UpdateTrackDto,
   ) {
-    return this.trackService.update(id, updateTracktDto);
+    return this.trackService.update(id, updateTrackDto);
   }
 
   @Delete(':id')

@@ -1,40 +1,48 @@
-import { Album } from 'src/album/entities/album.entity';
-import { Artist } from 'src/artist/entities/artist.entity';
-import { Track } from 'src/track/entities/track.entity';
-
 export class Favs {
   constructor(
-    private artists: Artist[] = [],
-    private albums: Album[] = [],
-    private tracks: Track[] = [],
+    private artists: string[] = [],
+    private albums: string[] = [],
+    private tracks: string[] = [],
   ) {}
 
-  addArtist(artist: Artist) {
-    this.artists.push(artist);
+  get getArtists() {
+    return this.artists;
   }
 
-  addAlbum(album: Album) {
-    this.albums.push(album);
+  get getAlbums() {
+    return this.albums;
   }
 
-  addTrack(track: Track) {
-    this.tracks.push(track);
+  get getTracks() {
+    return this.tracks;
   }
 
-  deleteArtist(id: string) {
-    this.artists = this.artists.filter((artist) => artist.id !== id);
+  addArtist(id: string) {
+    this.artists.push(id);
   }
 
-  deleteAlbum(id: string) {
-    this.albums = this.albums.filter((album) => album.id !== id);
+  addAlbum(id: string) {
+    this.albums.push(id);
   }
 
-  deleteTrack(id: string) {
-    this.tracks = this.tracks.filter((track) => track.id !== id);
+  addTrack(id: string) {
+    this.tracks.push(id);
   }
 
-  has(id: string, type: string) {
-    return this[type].find((item) => item.id === id);
+  deleteArtist(artistId: string) {
+    this.artists = this.artists.filter((id) => id !== artistId);
+  }
+
+  deleteAlbum(albumId: string) {
+    this.albums = this.albums.filter((id) => id !== albumId);
+  }
+
+  deleteTrack(trackId: string) {
+    this.tracks = this.tracks.filter((id) => id !== trackId);
+  }
+
+  has(id: string, type: string): string {
+    return this[type].find((itemId: string) => itemId === id);
   }
 }
 
