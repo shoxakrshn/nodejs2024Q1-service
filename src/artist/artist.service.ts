@@ -28,23 +28,31 @@ export class ArtistService {
   }
 
   async update(id: string, updateArtistDto: UpdateArtistDto) {
-    try {
-      return await this.databaseService.artist.update({
-        where: { id },
-        data: updateArtistDto,
-      });
-    } catch {
+    const artist = await this.databaseService.artist.findUnique({
+      where: { id },
+    });
+
+    if (!artist) {
       throw new NotFoundException('Artist not found');
     }
+
+    return await this.databaseService.artist.update({
+      where: { id },
+      data: updateArtistDto,
+    });
   }
 
   async delete(id: string) {
-    try {
-      await this.databaseService.artist.delete({
-        where: { id },
-      });
-    } catch {
+    const artist = await this.databaseService.artist.findUnique({
+      where: { id },
+    });
+
+    if (!artist) {
       throw new NotFoundException('Artist not found');
     }
+
+    await this.databaseService.artist.delete({
+      where: { id },
+    });
   }
 }

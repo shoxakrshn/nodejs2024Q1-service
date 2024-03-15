@@ -27,21 +27,28 @@ export class AlbumService {
   }
 
   async update(id: string, updateArtistDto: UpdateAlbumDto) {
-    try {
-      return await this.databaseService.album.update({
-        where: { id },
-        data: updateArtistDto,
-      });
-    } catch {
+    const album = await this.databaseService.album.findUnique({
+      where: { id },
+    });
+
+    if (!album) {
       throw new NotFoundException('Album not found');
     }
+    return await this.databaseService.album.update({
+      where: { id },
+      data: updateArtistDto,
+    });
   }
 
   async delete(id: string) {
-    try {
-      await this.databaseService.album.delete({ where: { id } });
-    } catch {
+    const album = await this.databaseService.album.findUnique({
+      where: { id },
+    });
+
+    if (!album) {
       throw new NotFoundException('Album not found');
     }
+
+    await this.databaseService.album.delete({ where: { id } });
   }
 }

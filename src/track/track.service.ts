@@ -33,21 +33,28 @@ export class TrackService {
   }
 
   async update(id: string, updateTrackDto: UpdateTrackDto) {
-    try {
-      return await this.databaseService.track.update({
-        where: { id },
-        data: updateTrackDto,
-      });
-    } catch {
+    const track = await this.databaseService.track.findUnique({
+      where: { id },
+    });
+
+    if (!track) {
       throw new NotFoundException('Track not found');
     }
+    return await this.databaseService.track.update({
+      where: { id },
+      data: updateTrackDto,
+    });
   }
 
   async delete(id: string) {
-    try {
-      return await this.databaseService.track.delete({ where: { id } });
-    } catch {
+    const track = await this.databaseService.track.findUnique({
+      where: { id },
+    });
+
+    if (!track) {
       throw new NotFoundException('Track not found');
     }
+
+    await this.databaseService.track.delete({ where: { id } });
   }
 }
