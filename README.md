@@ -17,6 +17,21 @@ git clone {repository URL}
 git checkout develop
 ```
 
+## Create .env file by using .env.example
+
+## Docker-compose
+
+```
+docker compose up --build
+```
+
+## Docker check for vulnerabilities
+
+```
+npm run docker-audit:api
+npm run docker-audit:db
+```
+
 ## Installing NPM modules
 
 ```
@@ -38,6 +53,10 @@ npm start:dev
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+### Docker Hub image repository
+
+[home-library-service2024q1](https://hub.docker.com/repository/docker/shoxakrshn/home-library-api/general)
 
 ## Testing
 
