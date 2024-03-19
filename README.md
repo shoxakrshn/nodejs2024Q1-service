@@ -14,7 +14,7 @@ git clone {repository URL}
 ## Switch branch
 
 ```
-git checkout develop
+git checkout docker/database
 ```
 
 ## Create .env file by using .env.example
