@@ -9,7 +9,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { CreateRefreshTokenDto } from './dto/create-refresh-token.dto';
 import { JwtPayload, decode } from 'jsonwebtoken';
-import { authConstants } from './constants/auth.constants';
+// import { authConstants } from './constants/auth.constants';
 
 interface Payload extends JwtPayload {
   userId: string;
@@ -24,7 +24,7 @@ export class AuthService {
   ) {}
 
   async signup({ login, password }: CreateUserDto) {
-    const hashPassword = await bcrypt.hash(password, +authConstants.salt);
+    const hashPassword = await bcrypt.hash(password, +process.env.CRYPT_SALT);
 
     const user = await this.databaseService.user.create({
       data: { login, password: hashPassword },
@@ -57,7 +57,7 @@ export class AuthService {
   async refresh({ refreshToken }: CreateRefreshTokenDto) {
     try {
       await this.jwtService.verify(refreshToken, {
-        secret: authConstants.refreshSecret,
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
       });
     } catch {
       throw new ForbiddenException('Refresh token is not valid');
@@ -72,13 +72,13 @@ export class AuthService {
 
   async generateTokens(payload: Payload) {
     const accessToken = await this.jwtService.sign(payload, {
-      secret: authConstants.accessSecret,
-      expiresIn: authConstants.accessExpire,
+      secret: process.env.JWT_SECRET_KEY,
+      expiresIn: process.env.TOKEN_EXPIRE_TIME,
     });
 
     const refreshToken = await this.jwtService.sign(payload, {
-      secret: authConstants.refreshSecret,
-      expiresIn: authConstants.refreshExpire,
+      secret: process.env.JWT_SECRET_REFRESH_KEY,
+      expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
     });
 
     return { accessToken, refreshToken };
