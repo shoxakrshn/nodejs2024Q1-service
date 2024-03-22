@@ -19,11 +19,15 @@ services:
       - JWT_SECRET_REFRESH_KEY=${JWT_SECRET_REFRESH_KEY}
       - TOKEN_EXPIRE_TIME=${TOKEN_EXPIRE_TIME}
       - TOKEN_REFRESH_EXPIRE_TIME=${TOKEN_REFRESH_EXPIRE_TIME}
+      - FILE_MAX_SIZE=${FILE_MAX_SIZE}
+      - FILE_MAX_NUMBER=${FILE_MAX_NUMBER}
+      - LOG_LEVEL=${LOG_LEVEL}
     ports:
       - ${PORT}:${PORT}
     volumes:
       - /usr/src/app/node_modules
       - ./src:/usr/src/app/src
+      - api_logs:/user/src/app/log
   postgres:
     build:
       context: ./src/database
@@ -51,6 +55,7 @@ services:
       - PGDATA:/var/lib/postgresql/data
 volumes:
   PGDATA:
+  api_logs:
 networks:
   backend:
     driver: bridge
