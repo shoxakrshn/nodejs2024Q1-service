@@ -1,6 +1,7 @@
+import { Prisma } from '@prisma/client';
 import { IsString, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 
-export class CreateTrackDto {
+export class CreateTrackDto implements Prisma.TrackCreateInput {
   @IsString()
   @IsNotEmpty()
   name: string;

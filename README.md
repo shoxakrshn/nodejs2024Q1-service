@@ -14,7 +14,25 @@ git clone {repository URL}
 ## Switch branch
 
 ```
-git checkout develop
+git checkout docker/database
+```
+
+## Create .env file by using .env.example
+
+## Docker-compose
+
+```
+docker compose up --build
+
+or by using npm
+npm run docker:build
+```
+
+## Docker check for vulnerabilities
+
+```
+npm run docker-scan:api
+npm run docker-scan:db
 ```
 
 ## Installing NPM modules
@@ -38,6 +56,16 @@ npm start:dev
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+### Docker Hub image repository
+
+##### NodeJS API:
+
+[home-library-api](https://hub.docker.com/repository/docker/shoxakrshn/home-library-api/general)
+
+##### PostgreSQL DB:
+
+[home-library-db](https://hub.docker.com/repository/docker/shoxakrshn/home-library-db/general)
 
 ## Testing
 
