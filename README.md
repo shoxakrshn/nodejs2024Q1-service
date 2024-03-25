@@ -59,7 +59,13 @@ For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ### Docker Hub image repository
 
-[home-library-service2024q1](https://hub.docker.com/repository/docker/shoxakrshn/home-library-api/general)
+##### NodeJS API:
+
+[home-library-api](https://hub.docker.com/repository/docker/shoxakrshn/home-library-api/general)
+
+##### PostgreSQL DB:
+
+[home-library-db](https://hub.docker.com/repository/docker/shoxakrshn/home-library-db/general)
 
 ## Testing
 
