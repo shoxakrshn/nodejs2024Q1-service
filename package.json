@@ -25,8 +25,8 @@
     "docker:down": "docker-compose down",
     "docker:start": "docker-compose start",
     "docker:stop": "docker-compose stop",
-    "docker-audit:api": "docker scout cves --details local://nodejs2024q1-service-api:latest",
-    "docker-audit:db": "docker scout cves --details local://nodejs2024q1-service-postgres:latest"
+    "docker-scan:api": "docker scout cves --details local://nodejs2024q1-service-api:latest",
+    "docker-scan:db": "docker scout cves --details local://nodejs2024q1-service-postgres:latest"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.3",

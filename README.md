@@ -23,13 +23,16 @@ git checkout docker/database
 
 ```
 docker compose up --build
+
+or by using npm
+npm run docker:build
 ```
 
 ## Docker check for vulnerabilities
 
 ```
-npm run docker-audit:api
-npm run docker-audit:db
+npm run docker-scan:api
+npm run docker-scan:db
 ```
 
 ## Installing NPM modules
