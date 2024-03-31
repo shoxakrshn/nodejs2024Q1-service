@@ -24,6 +24,18 @@ export class ArtistController {
   @UseGuards(AuthGuard)
   @Get()
   getAll() {
+    // Uncomment bellow setTimeout to check "uncaughtException"
+    // setTimeout(() => {
+    //   throw new Error('uncaughtException error');
+    // }, 1000);
+
+    // Uncomment bellow setTimeout to check "unhandledRejection"
+    // setTimeout(() => {
+    //   new Promise((_, reject) => reject('Promise rejected'));
+    // }, 1000);
+
+    // Uncomment bellow setTimeout to check "Internal server errot HttpStatusCode 500"
+    // throw new Error('Error happened');
     return this.artistService.getAll();
   }
 

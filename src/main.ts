@@ -18,7 +18,20 @@ async function bootstrap() {
     bufferLogs: true,
   });
 
-  app.useLogger(app.get(LoggingService));
+  const logger = app.get(LoggingService);
+  app.useLogger(logger);
+  logger.setupGlobalErrorListeners();
+
+  // Uncomment bellow setTimeout to check "uncaughtException"
+  // setTimeout(() => {
+  //   throw new Error('Error on module');
+  //   // new Promise((_, reject) => reject('Promise rejected'))
+  // }, 1000);
+
+  // Uncomment bellow setTimeout to check "unhandledRejection"
+  // setTimeout(() => {
+  //   new Promise((_, reject) => reject('Promise rejected'))
+  // }, 1000);
 
   const apiConfig = await readApiYaml();
   const document = load(apiConfig) as OpenAPIObject;
