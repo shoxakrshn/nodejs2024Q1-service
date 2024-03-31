@@ -37,10 +37,16 @@ cp .env.example .env
 
 ## :rocket: Running the Application
 
-Run the multi-container application:
+First time running the multi-container application:
 
 ```bash
-npm run docker:up or docker-compose up --build
+npm run docker:build or docker-compose up --build
+```
+
+Subsequent running the multi-container application:
+
+```bash
+npm run docker:up or docker-compose up
 ```
 
 Application starts on the port indicated in the `.env` file or default (**4000**) port.
