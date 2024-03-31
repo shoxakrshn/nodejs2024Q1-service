@@ -27,7 +27,7 @@ services:
     volumes:
       - /usr/src/app/node_modules
       - ./src:/usr/src/app/src
-      - api_logs:/user/src/app/log
+      - ./logs:/usr/src/app/logs
   postgres:
     build:
       context: ./src/database
@@ -44,6 +44,13 @@ services:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     expose:
       - ${POSTGRES_PASSWORD}
+    command:
+      - '-c'
+      - 'logging_collector=on'
+      - '-c'
+      - 'log_directory=logs'
+      - '-c'
+      - 'log_statement=all'
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres -d home_library']
       interval: 10s
