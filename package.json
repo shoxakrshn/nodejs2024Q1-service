@@ -21,7 +21,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "docker-audit:api": "docker scout cves --details local://nodejs2024q1-service-api:latest",
-    "docker-audit:db": "docker scout cves --details local://nodejs2024q1-service-postgres:latest"
+    "docker-audit:db": "docker scout cves --details local://nodejs2024q1-service-postgres:latest",
+    "docker:up": "docker-compose up --build",
+    "docker:down": "docker-compose down"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.3",
