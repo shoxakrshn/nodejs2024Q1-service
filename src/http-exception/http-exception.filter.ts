@@ -1,11 +1,10 @@
 import {
   ArgumentsHost,
   Catch,
-  ExceptionFilter,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { BaseExceptionFilter, HttpAdapterHost } from '@nestjs/core';
+import { BaseExceptionFilter } from '@nestjs/core';
 import { Request, Response } from 'express';
 import { LoggingService } from 'src/logging/logging.service';
 
@@ -43,7 +42,12 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
     response.status(responseBody.statusCode).json(responseBody);
 
     const errorMessage = this.generateErrorMessage(request, responseBody);
-    this.logger.error(errorMessage, HttpExceptionFilter.name);
+
+    if (responseBody.statusCode < 500) {
+      this.logger.warn(errorMessage, HttpExceptionFilter.name);
+    } else {
+      this.logger.error(errorMessage, HttpExceptionFilter.name);
+    }
   }
 
   private generateErrorMessage(
