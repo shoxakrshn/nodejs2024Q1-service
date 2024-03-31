@@ -11,8 +11,6 @@ import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
 import { LoggingModule } from './logging/logging.module';
 import { LoggingMiddleware } from './logging/logging.middleware';
-import { APP_FILTER } from '@nestjs/core';
-import { HttpExceptionFilter } from './http-exception/http-exception.filter';
 
 @Module({
   imports: [
@@ -27,10 +25,7 @@ import { HttpExceptionFilter } from './http-exception/http-exception.filter';
     LoggingModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    // { provide: APP_FILTER, useClass: HttpExceptionFilter },
-  ],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
