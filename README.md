@@ -1,98 +1,114 @@
-# Home Library Service
+# :books: Home Library Service [<img src="https://img.shields.io/badge/DockerHub-latest-blue.svg?logo=LOGO">](https://hub.docker.com/repository/docker/shoxakrshn/home-library-api/general)
 
-## Prerequisites
+## :clipboard: Prerequisites
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+| Software    | Link                                                                    |
+| ----------- | ----------------------------------------------------------------------- |
+| Git         | [download and install](https://git-scm.com/downloads)                   |
+| Node.js/npm | [download and install](https://nodejs.org/en/download/)                 |
+| Docker      | [download and install](https://www.docker.com/products/docker-desktop/) |
+| Docker Hub  | [create an account](https://hub.docker.com/)                            |
 
-## Downloading
+## :hammer_and_wrench: Installation
 
-```
-git clone {repository URL}
-```
+:one: Clone this repo:
 
-## Switch branch
-
-```
-git checkout docker/database
-```
-
-## Create .env file by using .env.example
-
-## Docker-compose
-
-```
-docker compose up --build
+```bash
+git clone git@github.com:shoxakrshn/nodejs2024Q1-service.git
 ```
 
-## Docker check for vulnerabilities
+:two: Switch branch
 
-```
-npm run docker-audit:api
-npm run docker-audit:db
+```bash
+git checkout jwt/logging
 ```
 
-## Installing NPM modules
+:three: Install NPM modules:
 
-```
+```bash
 npm install
 ```
 
-## Running application
+:four: Rename `.env.example` file to `.env`:
 
-```
-npm start
-```
-
-## Running application in dev mode
-
-```
-npm start:dev
+```bash
+cp .env.example .env
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+## :rocket: Running the Application
 
-### Docker Hub image repository
+Run the multi-container application:
 
-[home-library-service2024q1](https://hub.docker.com/repository/docker/shoxakrshn/home-library-api/general)
-
-## Testing
-
-After application running open new terminal and enter:
-
-To run all tests without authorization
-
-```
-npm run test
+```bash
+npm run docker:up or docker-compose up --build
 ```
 
-To run only one of all test suites
+Application starts on the port indicated in the `.env` file or default (**4000**) port.
 
-```
-npm run test -- <path to suite>
+Postgres database starts on the indicated in the `.env` file (**5432**) port.
+
+:warning: If you encounter `Already in use` error, please stop processes that are using the indicated ports.
+
+Turn down multi-container application:
+
+```bash
+npm run docker:down or docker-compose down
 ```
 
-To run all test with authorization
+## :package: Docker features
 
+To perform a vulnerability scan and receive recommendations from Docker Scout, execute the following command:
+
+```bash
+npm run docker-audit:api
 ```
+
+:link: To view the repository containing the app image on Docker Hub, please visit [this link](https://hub.docker.com/repository/docker/shoxakrshn/home-library-api/general).
+
+## :test_tube: Testing
+
+To run all tests with authorization:
+
+```bash
 npm run test:auth
 ```
 
-To run only specific test suite with authorization
+To run all tests with refresh authorization:
 
-```
-npm run test:auth -- <path to suite>
+```bash
+npm run test:refresh
 ```
 
-### Auto-fix and format
+To run all tests without authorization:
 
+```bash
+npm run test
 ```
+
+### 📌 Logging Level
+
+| Level   | Log Type |
+| ------- | -------- |
+| :zero:  | LOG      |
+| :one:   | ERROR    |
+| :two:   | WARN     |
+| :three: | DEBUG    |
+| :four:  | VERBOSE  |
+| :five:  | FATAL    |
+
+### :memo: Documentation
+
+:link: Once the app is running, you can easily access the OpenAPI documentation by typing http://localhost:4000/doc/ into your browser's address bar.
+
+### ✨ Auto-fix and format
+
+To check existing linting and formatting:
+
+```bash
 npm run lint
 ```
 
-```
+```bash
 npm run format
 ```
 
@@ -100,4 +116,4 @@ npm run format
 
 Press <kbd>F5</kbd> to debug.
 
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+:link: For more information, please check [this link](https://code.visualstudio.com/docs/editor/debugging).
