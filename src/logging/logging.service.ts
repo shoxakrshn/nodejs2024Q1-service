@@ -3,19 +3,19 @@ import * as fsPromises from 'node:fs/promises';
 import * as path from 'node:path';
 
 const enum eLogLevel {
-  VERBOSE = 0,
-  DEBUG = 1,
+  LOG = 0,
+  ERROR = 1,
   WARN = 2,
-  LOG = 3,
-  ERROR = 4,
+  DEBUG = 3,
+  VERBOSE = 4,
   FATAL = 5,
 }
 const enum eLogName {
-  VERBOSE = 'VERBOSE',
-  DEBUG = 'DEBUG',
-  WARN = 'WARN',
   LOG = 'LOG',
   ERROR = 'ERROR',
+  WARN = 'WARN',
+  DEBUG = 'DEBUG',
+  VERBOSE = 'VERBOSE',
   FATAL = 'FATAL',
 }
 
@@ -32,23 +32,17 @@ export class LoggingService extends ConsoleLogger {
     }
   }
 
-  warn(message: any, context?: string) {
-    if (this.logLevel >= eLogLevel.WARN) {
-      this.logToFile(eLogName.WARN, message, context);
-      super.warn(message, context);
-    }
-  }
-
-  fatal(message: any, context?: string) {
-    if (this.logLevel >= eLogLevel.FATAL) {
-      super.fatal(message, context);
-    }
-  }
-
   error(message: any, stackOrContext?: string) {
     if (this.logLevel >= eLogLevel.ERROR) {
       this.logToFile(eLogName.ERROR, message, stackOrContext);
       super.error(message, stackOrContext);
+    }
+  }
+
+  warn(message: any, context?: string) {
+    if (this.logLevel >= eLogLevel.WARN) {
+      this.logToFile(eLogName.WARN, message, context);
+      super.warn(message, context);
     }
   }
 
@@ -64,6 +58,29 @@ export class LoggingService extends ConsoleLogger {
       this.logToFile(eLogName.VERBOSE, message, context);
       super.verbose(message, context);
     }
+  }
+
+  fatal(message: any, context?: string) {
+    if (this.logLevel >= eLogLevel.FATAL) {
+      super.fatal(message, context);
+    }
+  }
+
+  setupGlobalErrorListeners() {
+    process.on('uncaughtException', (error) => {
+      const errorMessage = error.message
+        ? error.message
+        : 'uncaught Error happened';
+
+      this.logToFile(eLogName.FATAL, errorMessage, 'uncaughtException');
+      this.fatal(errorMessage, 'uncaughtException');
+    });
+
+    process.on('unhandledRejection', (reason) => {
+      const reasonMessage = reason instanceof Error ? reason.message : reason;
+      this.logToFile(eLogName.FATAL, reasonMessage, 'unhandledRejection');
+      this.fatal(reasonMessage, 'unhandledRejection');
+    });
   }
 
   private async logToFile(logType: eLogName, message: any, context?: string) {
@@ -86,7 +103,7 @@ export class LoggingService extends ConsoleLogger {
 
       const fileStat = await fsPromises.stat(dstFilePath);
 
-      if (fileStat.size >= this.maxSizeInBytes) {
+      if (fileStat.size > this.maxSizeInBytes) {
         const renamedFilePath = path.join(
           dstDirPath,
           `${logFilename}_${Date.now()}.log`,
@@ -98,21 +115,25 @@ export class LoggingService extends ConsoleLogger {
 
       const readdir = await fsPromises.readdir(dstDirPath);
       const fileStats = await Promise.all(
-        readdir.map(async (item) => {
-          const pathname = path.join(dstDirPath, item);
-          const stat = await fsPromises.stat(pathname);
-          return stat.isFile() ? pathname : null;
+        readdir.map(async (fileName) => {
+          const filePath = path.join(dstDirPath, fileName);
+          const fileStat = await fsPromises.stat(filePath);
+          return fileStat.isFile()
+            ? { filePath, mtime: fileStat.mtime.getTime() }
+            : null;
         }),
       );
 
-      const listOfFiles = fileStats.filter(Boolean);
+      const listOfFiles = fileStats
+        .filter(Boolean)
+        .sort((a, b) => a.mtime - b.mtime);
 
       if (listOfFiles.length > this.maxNumberFiles) {
         const indexToRemove = listOfFiles.length - this.maxNumberFiles;
         const fileNamestoRemove = listOfFiles.slice(0, indexToRemove);
 
         await Promise.all(
-          fileNamestoRemove.map((filepath) => fsPromises.rm(filepath)),
+          fileNamestoRemove.map(({ filePath }) => fsPromises.unlink(filePath)),
         );
 
         await fsPromises.appendFile(dstFilePath, '');
