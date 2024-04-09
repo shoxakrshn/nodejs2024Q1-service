@@ -1,0 +1,68 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_started
+    networks:
+      - backend
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - PORT=${PORT}
+      - DATABASE_URL=${DATABASE_URL}
+      - CRYPT_SALT=${CRYPT_SALT}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_SECRET_REFRESH_KEY=${JWT_SECRET_REFRESH_KEY}
+      - TOKEN_EXPIRE_TIME=${TOKEN_EXPIRE_TIME}
+      - TOKEN_REFRESH_EXPIRE_TIME=${TOKEN_REFRESH_EXPIRE_TIME}
+      - FILE_MAX_SIZE=${FILE_MAX_SIZE}
+      - FILE_MAX_NUMBER=${FILE_MAX_NUMBER}
+      - LOG_LEVEL=${LOG_LEVEL}
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - /usr/src/app/node_modules
+      - ./src:/usr/src/app/src
+      - ./logs:/usr/src/app/logs
+  postgres:
+    build:
+      context: ./src/database
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    expose:
+      - ${POSTGRES_PASSWORD}
+    command:
+      - '-c'
+      - 'logging_collector=on'
+      - '-c'
+      - 'log_directory=logs'
+      - '-c'
+      - 'log_statement=all'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d home_library']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    volumes:
+      - PGDATA:/var/lib/postgresql/data
+volumes:
+  PGDATA:
+  api_logs:
+networks:
+  backend:
+    driver: bridge
