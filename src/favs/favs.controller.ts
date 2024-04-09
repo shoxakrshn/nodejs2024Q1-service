@@ -13,7 +13,6 @@ import { FavsService } from './favs.service';
 @Controller('favs')
 export class FavsController {
   constructor(private readonly favsService: FavsService) {}
-
   @Get()
   getAll() {
     return this.favsService.getAll();

@@ -3,69 +3,88 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { User } from './entities/user.entity';
+import { DatabaseService } from 'src/database/database.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user.dto';
-import { DatabaseService } from 'src/database/database.service';
+import { User } from '@prisma/client';
+
+const userSelectFields = {
+  id: true,
+  login: true,
+  version: true,
+  createdAt: true,
+  updatedAt: true,
+};
 
 @Injectable()
 export class UserService {
-  constructor(private readonly dbService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseService) {}
 
-  getAll() {
-    const users = [...this.dbService.users.values()].map((user) =>
-      this.removeUserPasswordField(user),
-    );
+  async getAll() {
+    const users = await this.databaseService.user.findMany({
+      select: userSelectFields,
+    });
 
-    return users;
+    return users.map((user) => this.convertDate(user));
   }
 
-  getById(id: string) {
-    if (!this.dbService.users.has(id)) {
+  async getById(id: string) {
+    const user = await this.databaseService.user.findUnique({
+      where: { id },
+      select: userSelectFields,
+    });
+
+    if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    const user = this.dbService.users.get(id);
-    return this.removeUserPasswordField(user);
+    return this.convertDate(user);
   }
 
-  create({ login, password }: CreateUserDto) {
-    const newUser: User = new User(login, password);
-    this.dbService.users.set(newUser.id, newUser);
+  async create(createUserDto: CreateUserDto) {
+    const user = await this.databaseService.user.create({
+      data: createUserDto,
+      select: userSelectFields,
+    });
 
-    return this.removeUserPasswordField(newUser);
+    return this.convertDate(user);
   }
 
-  update(id: string, { oldPassword, newPassword }: UpdatePasswordDto) {
-    if (!this.dbService.users.has(id)) {
+  async update(id: string, { oldPassword, newPassword }: UpdatePasswordDto) {
+    const user = await this.databaseService.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
       throw new NotFoundException('User not found');
     }
-
-    const user = this.dbService.users.get(id);
 
     if (user.password !== oldPassword) {
       throw new ForbiddenException('Old password is wrong');
     }
 
-    user.password = newPassword;
-    user.version += 1;
-    user.updatedAt = Date.now();
+    const updatedUser = await this.databaseService.user.update({
+      where: { id },
+      data: { password: newPassword, version: user.version + 1 },
+      select: userSelectFields,
+    });
 
-    return this.removeUserPasswordField(user);
+    return this.convertDate(updatedUser);
   }
 
-  delete(id: string) {
-    if (!this.dbService.users.has(id)) {
+  async delete(id: string) {
+    try {
+      await this.databaseService.user.delete({ where: { id } });
+    } catch {
       throw new NotFoundException('User not found');
     }
-
-    this.dbService.users.delete(id);
   }
 
-  removeUserPasswordField(user: User) {
-    const userWithoutPassword = { ...user };
-    delete userWithoutPassword.password;
-
-    return userWithoutPassword;
+  convertDate(user: Omit<User, 'password'>) {
+    return {
+      ...user,
+      createdAt: new Date(user.createdAt).getTime(),
+      updatedAt: new Date(user.updatedAt).getTime(),
+    };
   }
 }
