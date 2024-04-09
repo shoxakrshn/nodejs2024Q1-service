@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { FavsController } from './favs.controller';
-import { FavsService } from './favs.service';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
 import { DatabaseModule } from 'src/database/database.module';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  controllers: [FavsController],
-  providers: [FavsService],
+  controllers: [AuthController],
+  providers: [AuthService],
   imports: [DatabaseModule, JwtModule],
 })
-export class FavsModule {}
+export class AuthModule {}
